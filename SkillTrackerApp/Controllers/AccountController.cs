@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SkillTrackerApp.ViewModels;
 
 namespace SkillTrackerApp.Controllers
 {
@@ -8,5 +9,16 @@ namespace SkillTrackerApp.Controllers
         {
             return View();
         }
+
+        public IActionResult Register()
+        {
+            return View(); 
+        }
+
+        public IActionResult VerifyEmail()
+        {
+            return View();
+        }
+        
     }
 }
