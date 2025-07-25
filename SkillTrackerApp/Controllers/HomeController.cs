@@ -1,6 +1,7 @@
-using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkillTrackerApp.Models;
+using System.Diagnostics;
 
 namespace SkillTrackerApp.Controllers
 {
@@ -18,6 +19,7 @@ namespace SkillTrackerApp.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();
