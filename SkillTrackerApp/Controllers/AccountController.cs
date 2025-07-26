@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SkillTrackerApp.Models;
 using SkillTrackerApp.ViewModels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SkillTrackerApp.Controllers
 {
@@ -92,7 +93,25 @@ namespace SkillTrackerApp.Controllers
         {
             return View();
         }
-        
+        [HttpPost]
+        public async Task<IActionResult> VerifyEmail(VerifyEmailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var users = await userManager.FindByNameAsync(model.Email);
+
+                if(users == null)
+                {
+                    ModelState.AddModelError("", "Something is wrong!");
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("ChangePassword", "Account", new { username = users.UserName });
+                }
+            }
+            return View(model);
+        }
         public IActionResult ChangePassword()
         {
             return View();
