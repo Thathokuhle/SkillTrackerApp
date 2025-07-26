@@ -40,7 +40,7 @@ namespace SkillTrackerApp.Controllers
 
             if (result.Succeeded)
             {
-                return RedirectToAction("Index", "Home"); 
+                return RedirectToAction("Index", "Home");
             }
             else if (result.IsLockedOut)
             {
@@ -56,7 +56,7 @@ namespace SkillTrackerApp.Controllers
 
         public IActionResult Register()
         {
-            return View(); 
+            return View();
         }
 
         [HttpPost]
@@ -79,7 +79,7 @@ namespace SkillTrackerApp.Controllers
                 }
                 else
                 {
-                    foreach(var error in result.Errors)
+                    foreach (var error in result.Errors)
                     {
                         ModelState.AddModelError("", error.Description);
                         return View(model);
@@ -88,7 +88,7 @@ namespace SkillTrackerApp.Controllers
                 return View(model);
             }
             return View(model);
-        } 
+        }
         public IActionResult VerifyEmail()
         {
             return View();
@@ -100,7 +100,7 @@ namespace SkillTrackerApp.Controllers
             {
                 var users = await userManager.FindByNameAsync(model.Email);
 
-                if(users == null)
+                if (users == null)
                 {
                     ModelState.AddModelError("", "Something is wrong!");
                     return View(model);
@@ -112,9 +112,51 @@ namespace SkillTrackerApp.Controllers
             }
             return View(model);
         }
-        public IActionResult ChangePassword()
+
+        public IActionResult ChangePassword(string username)
         {
-            return View();
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("VerifyEmail", "Account");
+            }
+            return View(new ChangePasswordViewModel { Email = username });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByNameAsync(model.Email);
+                if (user != null)
+                {
+                    var result = await userManager.RemovePasswordAsync(user);
+                    if (result.Succeeded)
+                    {
+                        result = await userManager.AddPasswordAsync(user, model.NewPassword);
+                        return RedirectToAction("Login", "Account");
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                            return View(model);
+                        }
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("","Email not found!");
+                    return View(model);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Something is wrong. try again.");
+                return View(model);
+            }
         }
     }
 }
