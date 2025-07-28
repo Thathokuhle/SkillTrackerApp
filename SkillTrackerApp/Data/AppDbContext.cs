@@ -10,8 +10,12 @@ namespace SkillTrackerApp.Database
         {
         }
 
+        public DbSet<Skill> Skills { get; set; }
+        public DbSet<LearningGoal> LearningGoals { get; set; }
+
         protected AppDbContext()
         {
         }
     }
 }
+    
