@@ -7,6 +7,5 @@
         public string Description { get; set; }
         public string UserId { get; set; }
         public Users User { get; set; }
-        public ICollection<LearningGoal> Goals { get; set; }
     }
 }

@@ -2,8 +2,7 @@
 @model Skill;
 
 @{
-    ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_SkillsLayout.cshtml";
+    ViewData["Title"] = "Add New Skill";
 }
 
 <div class="skill-container mt-3">
@@ -22,8 +21,8 @@
         <textarea asp-for="Description" class="form-control"></textarea>
     </div>
             <div class="form-group">
-            <input type="submit" value="Login" class="btn btn-success w-100 p-2" />           
-            <div class="text-center">
+                <input type="submit" value="Add Skill" class="btn btn-success w-100 p-2" />
+                <div class="text-center">
                 <a asp-controller="Home" asp-action="Index" class="text-decoration-none mt-3" />Back</a>
             </div>
             </div>
