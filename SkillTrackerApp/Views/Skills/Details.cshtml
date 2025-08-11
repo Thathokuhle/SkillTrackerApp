@@ -1,0 +1,21 @@
+﻿@model SkillTrackerApp.Models.Skill
+
+@{
+    ViewData["Title"] = "Skill Details";
+}
+
+<h2 class="mb-4">Skill Details</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">@Model.Name</h4>
+        <p class="card-text">
+            <strong>Description:</strong> @Model.Description
+        </p>
+    </div>
+    <div class="card-footer d-flex flex-row">
+        <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning m-2">Edit</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger m-2">Delete</a>
+        <a asp-action="Index" class="btn btn-secondary m-2">Back to List</a>
+    </div>
+</div>

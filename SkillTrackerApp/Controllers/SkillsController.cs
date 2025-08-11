@@ -71,6 +71,81 @@ namespace SkillTrackerApp.Controllers
             }
         }
 
+        // GET: Skills/Update/5
+        public async Task<IActionResult> Update(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var skill = await _context.Skills
+                .FirstOrDefaultAsync(s => s.Id == id && s.UserId == user.Id);
+
+            if (skill == null)
+            {
+                return NotFound();
+            }
+
+            return View(skill);
+        }
+
+        // POST: Skills/Update/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update(int id, [Bind("Id,Name,Description")] Skill skill)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                await _context.Database.ExecuteSqlInterpolatedAsync(
+                    $"EXEC sp_UpdateSkill @Id={id}, @Name={skill.Name}, @Description={skill.Description}, @UserId={user.Id}"
+                );
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Failed to update skill.");
+                return View(skill);
+            }
+        }
+
+
+        // GET: Skills/Delete/5
+        public async Task<IActionResult> Delete(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var skill = await _context.Skills
+                .FirstOrDefaultAsync(s => s.Id == id && s.UserId == user.Id);
+
+            if (skill == null)
+            {
+                return NotFound();
+            }
+
+            return View(skill);
+        }
+
+        // POST: Skills/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                await _context.Database.ExecuteSqlInterpolatedAsync(
+                    $"EXEC sp_DeleteSkill @Id={id}, @UserId={user.Id}"
+                );
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Failed to delete skill.");
+                return View();
+            }
+        }
+
 
     }
 }
