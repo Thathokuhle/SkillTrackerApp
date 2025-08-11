@@ -17,5 +17,7 @@ namespace SkillTrackerApp.Models
 
         public string UserId { get; set; }
         public Users User { get; set; }
+
+        public int ProgressPercentage { get; set; }
     }
 }

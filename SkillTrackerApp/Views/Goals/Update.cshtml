@@ -36,6 +36,12 @@
         <label asp-for="IsCompleted" class="form-check-label">Mark as Completed</label>
     </div>
 
+    <!-- NEW: Progress Slider -->
+    <div class="mb-3">
+        <label for="progressRange" class="form-label">Progress: @Model.ProgressPercentage%</label>
+        <input type="range" id="progressRange" name="ProgressPercentage" min="0" max="100" value="@Model.ProgressPercentage" class="form-range" />
+    </div>
+
     <button type="submit" class="btn btn-primary">Update Goal</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>

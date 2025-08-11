@@ -2,7 +2,33 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h2>Progress Dashboard</h2>
+
+<div>
+    <canvas id="progressChart"></canvas>
 </div>
+
+<div>
+    <h3>Active Goals</h3>
+    <ul>
+        @foreach (var goal in Model.ActiveGoals)
+        {
+            <li>@goal.GoalTitle - @goal.ProgressPercentage%</li>
+        }
+    </ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('progressChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Completed', 'In Progress'],
+            datasets: [{
+                data: [@Model.CompletedCount, @Model.InProgressCount],
+                backgroundColor: ['#4caf50', '#ff9800']
+            }]
+        }
+    });
+</script>

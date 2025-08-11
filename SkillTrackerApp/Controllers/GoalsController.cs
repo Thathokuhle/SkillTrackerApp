@@ -65,16 +65,17 @@ public class GoalsController : Controller
     // UPDATE POST
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Update(int id, [Bind("Id,GoalTitle,TargetDate,IsCompleted,SkillId")] LearningGoal goal)
+    public async Task<IActionResult> Update(int id, [Bind("Id,GoalTitle,TargetDate,IsCompleted,SkillId,ProgressPercentage")] LearningGoal goal)
     {
         var user = await _userManager.GetUserAsync(User);
 
         await _context.Database.ExecuteSqlInterpolatedAsync(
-            $"EXEC sp_UpdateGoal @Id={id}, @GoalTitle={goal.GoalTitle}, @TargetDate={goal.TargetDate}, @IsCompleted={goal.IsCompleted}, @SkillId={goal.SkillId}, @UserId={user.Id}"
+            $"EXEC sp_UpdateGoal @Id={id}, @GoalTitle={goal.GoalTitle}, @TargetDate={goal.TargetDate}, @IsCompleted={goal.IsCompleted}, @SkillId={goal.SkillId}, @ProgressPercentage={goal.ProgressPercentage}, @UserId={user.Id}"
         );
 
         return RedirectToAction(nameof(Index));
     }
+
 
     // DELETE GET
     public async Task<IActionResult> Delete(int id)
