@@ -16,6 +16,9 @@
     <div class="card-footer d-flex flex-row">
         <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning m-2">Edit</a>
         <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger m-2">Delete</a>
+        <a asp-controller="Goals" asp-action="Index" asp-route-skillId="@Model.Id" class="btn btn-primary m-2">
+            View Goals
+        </a>
         <a asp-action="Index" class="btn btn-secondary m-2">Back to List</a>
     </div>
 </div>

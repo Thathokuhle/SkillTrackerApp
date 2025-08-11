@@ -1,0 +1,45 @@
+﻿@model IEnumerable<SkillTrackerApp.Models.LearningGoal>
+
+@{
+    ViewData["Title"] = "Learning Goals";
+}
+
+<h2 class="mb-4">Learning Goals</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">Add New Goal</a>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Goal Title</th>
+            <th>Skill</th>
+            <th>Target Date</th>
+            <th>Status</th>
+            <th style="width: 200px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var goal in Model)
+        {
+            <tr>
+                <td>@goal.GoalTitle</td>
+                <td>@goal.Skill?.Name</td>
+                <td>@goal.TargetDate.ToString("yyyy-MM-dd")</td>
+                <td>
+                    @if (goal.IsCompleted)
+                    {
+                        <span class="badge bg-success">Completed</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">In Progress</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Update" asp-route-id="@goal.Id" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@goal.Id" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

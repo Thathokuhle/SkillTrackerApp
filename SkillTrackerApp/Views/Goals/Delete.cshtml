@@ -1,0 +1,25 @@
+﻿@model SkillTrackerApp.Models.LearningGoal
+
+@{
+    ViewData["Title"] = "Delete Goal";
+}
+
+<h2 class="mb-4 text-danger">Delete Learning Goal</h2>
+
+<div class="alert alert-warning">
+    <strong>Warning!</strong> This will permanently delete the goal: <strong>@Model.GoalTitle</strong>
+</div>
+
+<ul class="list-group mb-3">
+    <li class="list-group-item"><strong>Skill:</strong> @Model.Skill?.Name</li>
+    <li class="list-group-item"><strong>Target Date:</strong> @Model.TargetDate.ToString("yyyy-MM-dd")</li>
+    <li class="list-group-item"><strong>Status:</strong> @(Model.IsCompleted ? "Completed" : "In Progress")</li>
+</ul>
+
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

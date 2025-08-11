@@ -1,0 +1,46 @@
+﻿@model SkillTrackerApp.Models.LearningGoal
+
+@{
+    ViewData["Title"] = "Add New Goal";
+}
+
+<h2 class="mb-4">Add New Learning Goal</h2>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="GoalTitle" class="form-label"></label>
+        <input asp-for="GoalTitle" class="form-control" />
+        <span asp-validation-for="GoalTitle" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TargetDate" class="form-label"></label>
+        <input asp-for="TargetDate" class="form-control" type="date" />
+        <span asp-validation-for="TargetDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SkillId" class="form-label">Select Skill</label>
+        <select asp-for="SkillId" class="form-select"
+                asp-items="@(new SelectList(ViewBag.Skills, "Id", "Name"))">
+            <option value="">-- Select Skill --</option>
+        </select>
+        <span asp-validation-for="SkillId" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsCompleted" class="form-check-input" />
+        <label asp-for="IsCompleted" class="form-check-label">Mark as Completed</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Goal</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
