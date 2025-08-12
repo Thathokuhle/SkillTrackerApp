@@ -22,9 +22,19 @@ public class GoalsController : Controller
     {
         var user = await _userManager.GetUserAsync(User);
         var goals = await _context.LearningGoals
-            .Include(g => g.Skill)
-            .Where(g => g.UserId == user.Id)
-            .ToListAsync();
+     .Where(g => g.UserId == user.Id)
+     .Select(g => new LearningGoal
+     {
+         Id = g.Id,
+         GoalTitle = g.GoalTitle,
+         TargetDate = g.TargetDate,
+         IsCompleted = g.IsCompleted,
+         SkillId = g.SkillId,
+         UserId = g.UserId,
+         ProgressPercentage = g.ProgressPercentage ?? 0  // use 0 if null
+     })
+     .ToListAsync();
+
         return View(goals);
     }
 

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;  // You injected UserManager but you don't have it here
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SkillTrackerApp.Database;
@@ -11,16 +12,38 @@ namespace SkillTrackerApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly AppDbContext _context;
+        private readonly UserManager<Users> _userManager;  // MISSING
 
-        public HomeController(ILogger<HomeController> logger, AppDbContext context)
+        // Fix: Inject UserManager<Users> via constructor
+        public HomeController(ILogger<HomeController> logger, AppDbContext context, UserManager<Users> userManager)
         {
             _logger = logger;
             _context = context;
+            _userManager = userManager;  // Assign it here
         }
 
-        public IActionResult Index()
+        [Authorize]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);  // Use _userManager, was missing in your class
+
+            if (user == null)  // Defensive check
+            {
+                return Challenge();  // Force login if not authenticated properly
+            }
+
+            var goals = await _context.LearningGoals
+                .Where(g => g.UserId == user.Id)
+                .ToListAsync();
+
+            var model = new DashboardViewModel
+            {
+                ActiveGoals = goals.Where(g => !g.IsCompleted).ToList(),
+                CompletedCount = goals.Count(g => g.IsCompleted),
+                InProgressCount = goals.Count(g => !g.IsCompleted)
+            };
+
+            return View(model);
         }
 
         [Authorize]
@@ -30,6 +53,8 @@ namespace SkillTrackerApp.Controllers
         }
 
         // Update goal progress
+        [HttpPost]  // Mark as POST since it modifies data
+        [ValidateAntiForgeryToken]  // For security
         public async Task<IActionResult> UpdateGoalProgressAsync(int goalId, int progress)
         {
             var goal = await _context.LearningGoals.FindAsync(goalId);
@@ -40,10 +65,11 @@ namespace SkillTrackerApp.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Goals"); // Redirect to goals page
+            return RedirectToAction("Index"); // Redirect to Index (Dashboard)
         }
 
-        // Get average progress for a specific user
+        // You probably don’t need this as an action since it returns a primitive,
+        // but if you want it as an API endpoint, mark with [HttpGet] and return Json
         public async Task<double> GetAverageProgressForUserAsync(string userId)
         {
             return await _context.LearningGoals
