@@ -72,9 +72,9 @@ namespace SkillTrackerApp.Controllers
         // but if you want it as an API endpoint, mark with [HttpGet] and return Json
         public async Task<double> GetAverageProgressForUserAsync(string userId)
         {
-            return await _context.LearningGoals
-                .Where(g => g.UserId == userId)
-                .AverageAsync(g => g.ProgressPercentage);
+             return await _context.LearningGoals
+             .Where(g => g.UserId == userId)
+             .AverageAsync(g => (double?)g.ProgressPercentage) ?? 0;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

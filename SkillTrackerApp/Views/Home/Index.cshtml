@@ -1,16 +1,26 @@
-﻿@model SkillTrackerApp.Models.DashboardViewModel;
+﻿@model SkillTrackerApp.Models.DashboardViewModel
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<h2>Progress Dashboard</h2>
+<style>
+    .chart-container {
+        max-width: 500px;
+        height: 400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+</style>
 
-<div>
+
+<h2 style="text-align:center; margin-bottom: 20px;">Progress Dashboard</h2>
+
+<div class="chart-container">
     <canvas id="progressChart"></canvas>
 </div>
 
-<div>
+<div style="max-width: 500px; margin: 30px auto;">
     <h3>Active Goals</h3>
     <ul>
         @foreach (var goal in Model.ActiveGoals)
@@ -24,13 +34,36 @@
 <script>
     var ctx = document.getElementById('progressChart').getContext('2d');
     var chart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: ['Completed', 'In Progress'],
             datasets: [{
                 data: [@Model.CompletedCount, @Model.InProgressCount],
-                backgroundColor: ['#4caf50', '#ff9800']
+                backgroundColor: ['#4caf50', '#ff9800'],
+                borderWidth: 1
             }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%', // makes the hole bigger for a clean look
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { font: { size: 14 } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            let value = context.raw;
+                            let percentage = ((value / total) * 100).toFixed(1) + '%';
+                            return `${context.label}: ${value} (${percentage})`;
+                        }
+                    }
+                }
+            }
         }
     });
 </script>
+

@@ -31,7 +31,7 @@ public class GoalsController : Controller
          IsCompleted = g.IsCompleted,
          SkillId = g.SkillId,
          UserId = g.UserId,
-         ProgressPercentage = g.ProgressPercentage ?? 0  // use 0 if null
+         ProgressPercentage = g.ProgressPercentage ?? 0  
      })
      .ToListAsync();
 
