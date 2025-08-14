@@ -25,20 +25,23 @@ namespace SkillTrackerApp.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);  // Use _userManager, was missing in your class
-
-            if (user == null)  // Defensive check
-            {
-                return Challenge();  // Force login if not authenticated properly
-            }
+            var user = await _userManager.GetUserAsync(User);
 
             var goals = await _context.LearningGoals
                 .Where(g => g.UserId == user.Id)
+                .Select(g => new LearningGoal
+                {
+                    Id = g.Id,
+                    GoalTitle = g.GoalTitle,
+                    ProgressPercentage = g.ProgressPercentage,
+                    IsCompleted = g.IsCompleted
+                })
                 .ToListAsync();
 
             var model = new DashboardViewModel
             {
                 ActiveGoals = goals.Where(g => !g.IsCompleted).ToList(),
+                CompletedGoals = goals.Where(g => g.IsCompleted).ToList(),
                 CompletedCount = goals.Count(g => g.IsCompleted),
                 InProgressCount = goals.Count(g => !g.IsCompleted)
             };
@@ -46,16 +49,16 @@ namespace SkillTrackerApp.Controllers
             return View(model);
         }
 
+
         [Authorize]
         public IActionResult Privacy()
         {
             return View();
         }
 
-        // Update goal progress
-        [HttpPost]  // Mark as POST since it modifies data
-        [ValidateAntiForgeryToken]  // For security
-        public async Task<IActionResult> UpdateGoalProgressAsync(int goalId, int progress)
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> UpdateGoalProgress(int goalId, int progress)
         {
             var goal = await _context.LearningGoals.FindAsync(goalId);
             if (goal != null)
@@ -64,9 +67,9 @@ namespace SkillTrackerApp.Controllers
                 goal.IsCompleted = (progress == 100);
                 await _context.SaveChangesAsync();
             }
-
-            return RedirectToAction("Index"); // Redirect to Index (Dashboard)
+            return RedirectToAction("Index");
         }
+
 
         // You probably don’t need this as an action since it returns a primitive,
         // but if you want it as an API endpoint, mark with [HttpGet] and return Json
