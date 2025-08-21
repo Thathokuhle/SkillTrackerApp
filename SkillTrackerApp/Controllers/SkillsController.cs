@@ -20,12 +20,18 @@ namespace SkillTrackerApp.Controllers
         }
 
         // READ ALL
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchQuery)
         {
             var user = await _userManager.GetUserAsync(User);
+
             var skills = await _context.Skills
-                .Where(s => s.UserId == user.Id)
+                .FromSqlInterpolated(
+                    $"EXEC sp_GetSkills @UserId={user.Id}, @SearchQuery={searchQuery}"
+                )
                 .ToListAsync();
+
+            ViewBag.SearchQuery = searchQuery;
+
             return View(skills);
         }
 
