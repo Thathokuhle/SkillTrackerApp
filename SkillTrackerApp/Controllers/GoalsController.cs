@@ -18,22 +18,17 @@ public class GoalsController : Controller
     }
 
     // READ ALL
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? searchQuery)
     {
         var user = await _userManager.GetUserAsync(User);
+
         var goals = await _context.LearningGoals
-     .Where(g => g.UserId == user.Id)
-     .Select(g => new LearningGoal
-     {
-         Id = g.Id,
-         GoalTitle = g.GoalTitle,
-         TargetDate = g.TargetDate,
-         IsCompleted = g.IsCompleted,
-         SkillId = g.SkillId,
-         UserId = g.UserId,
-         ProgressPercentage = g.ProgressPercentage ?? 0  
-     })
-     .ToListAsync();
+            .FromSqlInterpolated(
+                $"EXEC sp_GetGoals @UserId={user.Id}, @SearchQuery={searchQuery}"
+            )
+            .ToListAsync();
+
+        ViewBag.SearchQuery = searchQuery;
 
         return View(goals);
     }

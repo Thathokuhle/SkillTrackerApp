@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SkillTrackerApp.Models
 {
@@ -14,6 +15,9 @@ namespace SkillTrackerApp.Models
 
         public int SkillId { get; set; }
         public Skill Skill { get; set; }
+
+        [NotMapped]
+        public string? SkillName { get; set; }  
 
         public string UserId { get; set; }
         public Users User { get; set; }
