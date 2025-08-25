@@ -1,10 +1,20 @@
-﻿@model IEnumerable<SkillTrackerApp.Models.LearningGoal>
+﻿@model IEnumerable<SkillTrackerApp.Models.DTOs.LearningGoalDto>
 
 @{
     ViewData["Title"] = "Learning Goals";
 }
 
-<h2 class="mb-4">Learning Goals</h2>
+<h2 class="mb-4">
+    @if (ViewBag.SkillId != null)
+    {
+        <span>Goals for Skill: @Model.FirstOrDefault()?.SkillName</span>
+    }
+    else
+    {
+        <span>All Learning Goals</span>
+    }
+</h2>
+
 
 <form method="get" class="mb-3">
     <div class="input-group">
@@ -22,6 +32,7 @@
             <th>Skill</th>
             <th>Target Date</th>
             <th>Status</th>
+            <th>Progress</th>
             <th style="width: 200px;">Actions</th>
         </tr>
     </thead>
@@ -41,6 +52,15 @@
                     {
                         <span class="badge bg-warning text-dark">In Progress</span>
                     }
+                </td>
+                <td>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar @(goal.IsCompleted ? "bg-success" : "bg-info")"
+                             role="progressbar"
+                             style="width:@goal.ProgressPercentage%">
+                            @goal.ProgressPercentage%
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <a asp-action="Update" asp-route-id="@goal.Id" class="btn btn-warning btn-sm">Edit</a>
