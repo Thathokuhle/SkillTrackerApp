@@ -22,11 +22,16 @@ namespace SkillTrackerApp.Controllers
         // READ ALL
         public async Task<IActionResult> Index(string? searchQuery)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+                return Unauthorized();
 
+            // Call stored procedure with FromSqlRaw
             var skills = await _context.Skills
-                .FromSqlInterpolated(
-                    $"EXEC sp_GetSkills @UserId={user.Id}, @SearchQuery={searchQuery}"
+                .FromSqlRaw(
+                    "EXEC sp_GetSkills @UserId = {0}, @SearchQuery = {1}",
+                    currentUser.Id,
+                    searchQuery
                 )
                 .ToListAsync();
 

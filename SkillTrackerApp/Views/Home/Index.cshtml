@@ -4,94 +4,83 @@
     ViewData["Title"] = "Progress Dashboard";
 }
 
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<SkillTrackerApp.Models.Users> UserManager
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var displayName = currentUser?.FullName ?? currentUser?.UserName ?? "User";
+}
+
 
 <div class="container my-4">
     <h2 class="mb-4 text-left fw-bold">📊 Progress Dashboard</h2>
 
-    <!-- Row for Chart -->
+    <!-- Summary Cards -->
+    <div class="row my-4">
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card shadow-sm text-center p-3">
+                <i class="fas fa-book fa-2x mb-2 text-primary"></i>
+                <h5>Total Skills</h5>
+                <h3>@Model.TotalSkills</h3>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card shadow-sm text-center p-3">
+                <i class="fas fa-bullseye fa-2x mb-2 text-success"></i>
+                <h5>Total Goals</h5>
+                <h3>@Model.TotalGoals</h3>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card shadow-sm text-center p-3">
+                <i class="fas fa-check fa-2x mb-2 text-warning"></i>
+                <h5>Completed Goals</h5>
+                <h3>@Model.CompletedGoals</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Chart -->
     <div class="row mb-4">
-        <div class="col-12 col-md-4 offset-md-4">
+        <div class="col-12 col-md-4">
             <div class="card shadow-sm">
                 <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-chart-pie me-2"></i> Goal Progress</h5>
                     <canvas id="progressChart"></canvas>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Completed Goals -->
-    <div class="row">
-        <div class="col-12">
+    <!-- Recent Activity -->
+            <div class="col-12 col-md-8">
             <div class="card shadow-sm">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">Completed Goals</h5>
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i> Recent Activity</h5>
                 </div>
                 <div class="card-body">
-                    @if (Model.CompletedGoals.Any())
+                    @if (Model.RecentActivities.Any())
                     {
-                        <div class="list-group list-group-flush">
-                            @foreach (var goal in Model.CompletedGoals)
+                        <ul class="list-group list-group-flush">
+                            @foreach (var activity in Model.RecentActivities)
                             {
-                                <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                                    <div class="mb-2 mb-md-0">
-                                        <strong>@goal.GoalTitle</strong>
-                                        <span class="text-muted"> - @goal.ProgressPercentage%</span>
-                                    </div>
-                                    <form asp-action="UpdateGoalProgress" method="post" class="d-flex align-items-center gap-2">
-                                        <input type="hidden" name="goalId" value="@goal.Id" />
-                                        <input type="range" name="progress" min="0" max="100"
-                                               value="@goal.ProgressPercentage" class="form-range"
-                                               onchange="this.form.submit()" />
-                                    </form>
-                                </div>
+                                <li class="list-group-item">
+                                    <strong>@activity.Title</strong>
+                                    <span class="text-muted">(@activity.Date.ToString("yyyy-MM-dd"))</span>
+                                </li>
                             }
-                        </div>
+                        </ul>
                     }
                     else
                     {
-                        <p class="text-muted mb-0">No active goals at the moment.</p>
+                        <div class="text-center text-muted">No recent activity.</div>
                     }
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Active Goals -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Active Goals</h5>
-                </div>
-                <div class="card-body">
-                    @if (Model.ActiveGoals.Any())
-                    {
-                        <div class="list-group list-group-flush">
-                            @foreach (var goal in Model.ActiveGoals)
-                            {
-                                <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                                    <div class="mb-2 mb-md-0">
-                                        <strong>@goal.GoalTitle</strong>
-                                        <span class="text-muted"> - @goal.ProgressPercentage%</span>
-                                    </div>
-                                    <form asp-action="UpdateGoalProgress" method="post" class="d-flex align-items-center gap-2">
-                                        <input type="hidden" name="goalId" value="@goal.Id" />
-                                        <input type="range" name="progress" min="0" max="100"
-                                               value="@goal.ProgressPercentage" class="form-range"
-                                               onchange="this.form.submit()" />
-                                    </form>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted mb-0">No active goals at the moment.</p>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
 
 
